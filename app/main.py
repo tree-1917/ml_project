@@ -1,9 +1,19 @@
 # === Fastapi Libs
 from fastapi import FastAPI,HTTPException
 from fastapi.middleware.cors import CORSMiddleware
- 
-# === scheme 
-from . import schema
+ # === import pydantic 
+from pydantic import BaseModel 
+
+
+
+
+# Model Input Schema
+class ModelInput(BaseModel) : 
+    num_rooms : int 
+    home_size : int 
+    distance_from_sea : int 
+# 
+
 
 # === Model  
 from .ML_model import predict_home_price
@@ -32,7 +42,7 @@ async def root():
 
 # model routes 
 @app.post("/ml/")
-async def ml_model(options : schema.ModelInput ): 
+async def ml_model(options : ModelInput ): 
 
     # Validate Options 
     if options.num_rooms <= 0 or options.home_size <=0 or options.distance_from_sea <=0 : 
@@ -41,5 +51,5 @@ async def ml_model(options : schema.ModelInput ):
     # Predict home price 
     value = predict_home_price(options.num_rooms, options.home_size, options.distance_from_sea)
         
-    return {"options": options.dict() , "Value" : value }
+    return {"value" : value}
 
